@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Manga - Steven Baldelomar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --manga-black: #111111;
+            --manga-white: #ffffff;
+            --halftone: radial-gradient(#111 15%, transparent 16%);
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: var(--manga-black);
+            font-family: 'Patrick Hand', cursive, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        /* Contenedor de las Esferas del Dragón grandes y dispersas en el fondo */
+        .dragon-balls-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+            z-index: 0;
+        }
+
+        .ball {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle at 30% 30%, #ffdf40, #ff8c00 70%, #b34700 100%);
+            border-radius: 50%;
+            border: 4px solid #000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.9), inset 0 0 25px rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.55;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .ball:hover {
+            transform: scale(1.2);
+            opacity: 1;
+            box-shadow: 0 0 45px #ffea00, 0 0 80px #ff4500, inset 0 0 30px #ffffff;
+            z-index: 100;
+        }
+
+        .ball::after {
+            content: attr(data-stars);
+            white-space: pre-line;
+            font-size: 16px;
+            color: #d00000;
+            text-align: center;
+            line-height: 13px;
+            font-weight: bold;
+            text-shadow: 0 0 4px #ff0000, 0 0 2px #ff4500;
+        }
+
+        /* Posiciones de las 7 esferas */
+        .ball:nth-child(1) { top: 6%; left: 5%; }
+        .ball:nth-child(2) { top: 75%; left: 7%; }
+        .ball:nth-child(3) { top: 10%; right: 6%; }
+        .ball:nth-child(4) { top: 80%; right: 8%; }
+        .ball:nth-child(5) { top: 45%; left: 2%; }
+        .ball:nth-child(6) { top: 42%; right: 3%; }
+        .ball:nth-child(7) { top: 90%; left: 45%; }
+
+        /* Contenedor principal con el marco de Shenlong */
+        .manga-container-wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            width: 100%;
+            border-image: url('pngtree-shenron-dragon-ball-rectangular-frame-cute-pop-style-png-image_18009412.webp') 120 round;
+            border-width: 65px;
+            border-style: solid;
+            background-color: var(--manga-white);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        .manga-page {
+            background-color: var(--manga-white);
+            width: 100%;
+            border: 4px solid var(--manga-black);
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 5;
+        }
+
+        .manga-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 4px solid var(--manga-black);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-family: 'Bangers', cursive;
+            letter-spacing: 2px;
+            background: #fff;
+        }
+
+        .manga-header h1 {
+            margin: 0;
+            font-size: 1.7rem;
+        }
+
+        .manga-header span {
+            font-size: 1.2rem;
+            background: var(--manga-black);
+            color: var(--manga-white);
+            padding: 2px 8px;
+        }
+
+        .comic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .panel {
+            background: var(--manga-white);
+            border: 3px solid var(--manga-black);
+            padding: 15px;
+            position: relative;
+            box-shadow: 4px 4px 0px var(--manga-black);
+        }
+
+        .panel.full {
+            grid-column: span 2;
+        }
+
+        .panel.screentone {
+            background-image: var(--halftone);
+            background-size: 10px 10px;
+        }
+        
+        .panel.screentone .inner-white {
+            background: rgba(255, 255, 255, 0.96);
+            padding: 12px;
+            border: 2px solid var(--manga-black);
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: #fff;
+            border: 3px solid var(--manga-black);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+        }
+
+        .speech-bubble h3 {
+            margin-top: 0;
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.3rem;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 5px;
+        }
+
+        .speech-bubble ul {
+            margin: 5px 0 0 20px;
+            padding: 0;
+        }
+
+        .speech-bubble li {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .fx-text {
+            position: absolute;
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            color: #111;
+            transform: rotate(-10deg);
+            pointer-events: none;
+            text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff;
+            z-index: 10;
+        }
+
+        .manga-link {
+            display: inline-block;
+            background: var(--manga-black);
+            color: var(--manga-white);
+            padding: 8px 14px;
+            text-decoration: none;
+            font-family: 'Bangers', cursive;
+            letter-spacing: 1px;
+            border: 2px solid var(--manga-black);
+            margin-top: 5px;
+            margin-right: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .manga-link:hover {
+            background: var(--manga-white);
+            color: var(--manga-black);
+        }
+
+        .manga-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-family: 'Bangers', cursive;
+            letter-spacing: 1px;
+            border-top: 3px solid var(--manga-black);
+            padding-top: 10px;
+        }
+
+        @media (max-width: 650px) {
+            .comic-grid {
+                grid-template-columns: 1fr;
+            }
+            .panel.full {
+                grid-column: span 1;
+            }
+            .manga-container-wrapper {
+                border-width: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo oscuro con las 7 Esferas del Dragón -->
+    <div class="dragon-balls-bg">
+        <div class="ball" data-stars="★" title="¡Esfera de 1 Estrella!"></div>
+        <div class="ball" data-stars="★ ★" title="¡Esfera de 2 Estrellas!"></div>
+        <div class="ball" data-stars="★ ★&#10;★" title="¡Esfera de 3 Estrellas!"></div>
+        <div class="ball" data-stars="★ ★&#10;★ ★" title="¡Esfera de 4 Estrellas!"></div>
+        <div class="ball" data-stars="★ ★&#10;★ ★&#10;★" title="<div>Esfera de 5 Estrellas!</div>"></div>
+        <div class="ball" data-stars="★ ★ ★&#10;★ ★ ★" title="¡Esfera de 6 Estrellas!"></div>
+        <div class="ball" data-stars="★ ★ ★&#10;★ ★ ★&#10;★" title="¡Esfera de 7 Estrellas!"></div>
+    </div>
+
+    <!-- Contenedor con el marco de Shenlong -->
+    <div class="manga-container-wrapper">
+        
+        <div class="manga-page">
+            <!-- Encabezado principal con tu nombre -->
+            <div class="manga-header">
+                <h1>STEVEN BALDELOMAR CUADRA</h1>
+                <span>VOL. 1</span>
+            </div>
+
+            <div class="comic-grid">
+                
+                <!-- Panel 1: Párrafo de presentación personal -->
+                <div class="panel">
+                    <span class="fx-text" style="top: 5px; right: 10px;">¡ECLIPSE!</span>
+                    <div class="speech-bubble">
+                        <h3>Presentación Personal</h3>
+                        <p>“Me gustan mucho los juegos, soy team play (¡lamentablemente ya está toda manoseada la pobre Play 5 y ya la hackearon jaja!). Como pueden ver, me encanta Dragon Ball y también Berserk, combinando la mística de ambos mundos.”</p>
+                    </div>
+                </div>
+
+                <!-- Panel 2: Imagen local de tu máquina -->
+                <div class="panel screentone" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <div class="inner-white" style="width: 100%;">
+                        <h3 style="font-family: 'Bangers', cursive; margin: 0 0 5px 0;">ESTADO: LEGENDARIO</h3>
+                        <img src="C:\Users\HP ZBOOK\Desktop\paginaGuia\imagenes\2swf02u1yr151.jpg" alt="Estética Berserk" style="width: 100%; height: 130px; object-fit: cover; border: 2px solid black;">
+                        <p style="font-size: 0.85rem; margin: 4px 0 0 0;"><i>"Invocando el poder del abismo..."</i></p>
+                    </div>
+                </div>
+
+                <!-- Panel 3: Intereses y Habilidades -->
+                <div class="panel full screentone">
+                    <span class="fx-text" style="bottom: 10px; right: 20px; font-size: 3rem; transform: rotate(5deg);">¡PODER!</span>
+                    <div class="inner-white">
+                        <div class="speech-bubble" style="background: #fff; margin-bottom: 0;">
+                            <h3>⚡ Intereses y Habilidades del Guerrero</h3>
+                            <ul>
+                                <li><strong>Intereses:</strong> Me gusta mucho cocinar y me gustaría aprender mucho más sobre redes e infraestructura.</li>
+                                <li><strong>Administración de Bases de Datos:</strong> MySQL, PostgreSQL, SQL Server, MariaDB y Adabas/Natural.</li>
+                                <li><strong>Infraestructura y Sistemas:</strong> Servidores Linux (SUSE, Ubuntu, CentOS) y Windows Server, respaldos con Bash y cron.</li>
+                                <li><strong>Desarrollo de Software:</strong> Node.js, Express, NestJS, Next.js, Prisma ORM y .NET Framework.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel 4: Enlaces a redes y sitios favoritos -->
+                <div class="panel full">
+                    <div class="speech-bubble" style="border-radius: 5px; border-width: 3px;">
+                        <h3>🔗 Sitios y Enlaces Favoritos</h3>
+                        <p>Visita mis repositorios oficiales:</p>
+                        <a href="https://github.com/DevStevenC" target="_blank" class="manga-link">🐙 GitHub Personal (DevStevenC)</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pie de página -->
+            <div class="manga-footer">
+                UNIVERSIDAD NACIONAL DE INGENIERÍA (UNI) • DISEÑO DE SISTEMAS EN INTERNET
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
